@@ -57,9 +57,9 @@ class MetaPathGenerator:
         outfile = open(outfilename, 'w', encoding="ISO-8859-1")
         for poi in self.poi_userlist:
             poi0 = poi
-            for j in range(0, numwalks):  # wnum walks每个节点的行走数。以会议为起点，每个会议要走100个VAV；走1000遍=会议个数464*1000遍=464000条
+            for j in range(0, numwalks):  # wnum walks以每个起点行走的路径的数量。以poi0为起点，随机numwalks个路径。
                 outline = self.id_poi[poi0]  # outline='vADB'即122会议的名称
-                for i in range(0, walklength):  # 行走的长度走一次是一个VAV，走100次
+                for i in range(0, walklength):  # 行走的长度走一次是一个VAV，走walklength次，长度为2*walklength+1
                     users = self.poi_userlist[poi]
                     numa = len(users)  # numa代表该会议122的作者人数38
                     userid = random.randrange(numa)  # 将作者顺序打乱authorid=随机数28每次都不一样，但是为38中的一个数字
@@ -187,8 +187,8 @@ newoutfilename = ".\\data\\pup\\vector\\random_walks.txt"
 # outfilename = "E:\\#study\\Experiment\\(metapath2vec)\\data\\net_dbis\\output.txt"
 
 if __name__ == "__main__":
-    numwalks = 50
-    walklength = 3
+    numwalks = 50  #同一个起点开始的路径的数量
+    walklength = 20  #路径长度
     mpg = MetaPathGenerator()
     mpg.read_newdata(dirpath)
     mpg.generate_random_upu(newoutfilename, numwalks, walklength)
