@@ -116,6 +116,7 @@ def calsim():
                 # print('sim:', sim)
     fb.close()
 
+#找一个poi的前k个相似的poi
 def topk(poiid,k):
     #读文件，list列表，【poi1，poi2，simi】
     f = open('.\\data\\pup\\recommend\\simdict.txt', 'r', encoding='UTF-8', errors='ignore')
@@ -134,15 +135,34 @@ def topk(poiid,k):
     a = np.array(simlist)
     topid = heapq.nlargest(k, range(len(a)), a.take)
     #根据索引输出相似id以及相似度
-    simdict = dict()
+    simdict = dict()  #topk的id,sim字典
+    toplist = [] #topk的id列表
     for i in topid:
         simdict[idlist[i]] = simlist[i]
-    return simdict
+        toplist.append(idlist[i])
+    return simdict,toplist
+
+#评估指标
+def eval(test,rec):#参数：一个用户u的测试集，推荐列表
+    intersection = [i for i in test if i in rec] #求交集
+
+    precision = len(intersection) / len(rec)
+    recall = len(intersection) / len(test)
+    f1 = 2*precision*recall /(precision+recall)
+
+    return precision,recall,f1
 
 if __name__ == "__main__":
 
-    # data2csv()  # id向量类别信息写入csv文件
+    # data2csv()  # id向量类别信息写入csv文件 可以用weka进行聚类分类
+
+    #获取topk
     calsim() #统计poi相似度
-    sim = topk('4c040721f56c2d7faaae1d66',3)
-    print(sim)
+    topdict,topid = topk('4c040721f56c2d7faaae1d66',3)
+    print(topid)
+
+    # test = [1, 2, 3, 4, 5, 6]
+    # rec = [2, 6, 3, 7]
+    # precision,recall,f1 = eval(test,rec)
+    # print(precision,recall,f1)
 
