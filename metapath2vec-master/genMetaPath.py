@@ -8,21 +8,35 @@ class MetaPathGenerator:
     def __init__(self):
         self.id_user = dict()
         self.id_poi = dict()
+        self.id_cate = dict()
+        self.id_tl = dict()
         self.poi_userlist = dict()
         self.user_poilist = dict()
+        self.poi_catelist = dict()
+        self.cate_poilist = dict()
+        self.user_tllist = dict()
+        self.tl_userlist = dict()
+        self.poi_tllist = dict()
+        self.tl_poilist = dict()
 
-        self.id_author = dict()
-        self.id_conf = dict()
-        self.author_coauthorlist = dict()
-        self.conf_authorlist = dict()
-        self.author_conflist = dict()
-        self.paper_author = dict()
-        self.author_paper = dict()
-        self.conf_paper = dict()
-        self.paper_conf = dict()
+        # self.id_author = dict()
+        # self.id_conf = dict()
+        # self.author_coauthorlist = dict()
+        # self.conf_authorlist = dict()
+        # self.author_conflist = dict()
+        # self.paper_author = dict()
+        # self.author_paper = dict()
+        # self.conf_paper = dict()
+        # self.paper_conf = dict()
 
+    #构造
     #conf=poi,author=user 重写readdata和generate
-    def read_newdata(self, dirpath):
+    def read_upudata(self, dirpath):
+        self.id_poi.clear()
+        self.id_user.clear()
+        self.poi_userlist.clear()
+        self.user_poilist.clear()
+
         with open(dirpath + "\\id_user.txt",'r', encoding='ISO-8859-1') as adictfile:
             for line in adictfile:
                 toks = line.strip().split("\t")
@@ -75,15 +89,188 @@ class MetaPathGenerator:
                 outfile.write(outline + "\n")  # 产生多个PUPUP的序列。
         outfile.close()
 
-dirpath = ".\\data\\pup\\metapath"
-newoutfilename = ".\\data\\pup\\vector\\random_walks.txt"
+    def read_upcdata(self, dirpath):
+        self.id_poi.clear()
+        self.id_user.clear()
+        self.id_cate.clear()
+        self.poi_userlist.clear()
+        self.user_poilist.clear()
+        self.poi_catelist.clear()
+        self.cate_poilist.clear()
+
+        with open(dirpath + "\\id_user.txt",'r', encoding='ISO-8859-1') as adictfile:
+            for line in adictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    self.id_user[toks[0]] = toks[1].replace(" ", "")
+
+        with open(dirpath + "\\id_poi.txt",'r', encoding='ISO-8859-1') as cdictfile:
+            for line in cdictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    newpoi = toks[1].replace(" ", "")
+                    self.id_poi[toks[0]] = toks[0]
+
+        with open(dirpath + "\\id_category.txt",'r', encoding='ISO-8859-1') as cdictfile:
+            for line in cdictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    newpoi = toks[1].replace(" ", "")
+                    self.id_cate[toks[0]] = toks[0]
+
+        with open(dirpath + "\\user_poi_cate.txt",'r', encoding='ISO-8859-1') as pafile:
+            for line in pafile:
+                toks = line.strip().split("\t")
+                if len(toks) == 4:
+                    u, p, c = toks[0], toks[1], toks[3]  #tokes[2]是类别名称，toks[3]是类别id
+                    #u:'37',p:'4e3e097552b1a04aff2139ff'
+                    if u not in self.user_poilist:
+                        self.user_poilist[u] = []
+                    self.user_poilist[u].append(p)
+                    if p not in self.poi_userlist:
+                        self.poi_userlist[p] = []
+                    self.poi_userlist[p].append(u)
+                    # poi_user:{'21525':['33467','33467','33468'}]}
+                    # user_poi:{'33467':['21525'],'33468':['21525']}
+                    if p not in self.poi_catelist:
+                        self.poi_catelist[p] = c
+                    if c not in self.cate_poilist:
+                        self.cate_poilist[c] = []
+                    self.cate_poilist[c].append(p)
+
+    def generate_random_upcpu(self, outfilename, numwalks, walklength):
+        outfile = open(outfilename, 'w', encoding="ISO-8859-1")
+        for user in self.user_poilist:
+            user0 = user
+            for j in range(0, numwalks):
+                outline = self.id_user[user0]  #路径U
+                for i in range(0, walklength):
+                    pois = self.user_poilist[user]
+                    numa = len(pois)  # numa代表用户u对应的地点个数
+                    poiid = random.randrange(numa)
+                    poi = pois[poiid]
+                    outline += " " + self.id_poi[poi]  #路径UP
+
+                    cate = self.poi_catelist[poi]
+                    outline += " c" + cate   #路径UPC  #id 更改为 c+类别id  区别于其他实体的数字id
+
+                    pois = self.cate_poilist[cate]  #类别对应的地点
+                    numc = len(pois)   #numc代表类别c对应的poi个数
+                    poiid = random.randrange(numc)
+                    poi = pois[poiid]
+                    outline += " " + self.id_poi[poi]    #路径UPCP
+                    users = self.poi_userlist[poi]  # 地点对应的用户
+                    numu = len(users)
+                    userid = random.randrange(numu)
+                    user = users[userid]
+                    outline += " " + self.id_user[user]  #路径UPCPU
+                outfile.write(outline + "\n")
+        outfile.close()
+
+    def read_utlpdata(self, dirpath):
+        self.id_poi.clear()
+        self.id_user.clear()
+        self.id_tl.clear()
+        self.user_tllist.clear()
+        self.tl_userlist.clear()
+        self.tl_poilist.clear()
+        self.poi_tllist.clear()
+
+        with open(dirpath + "\\id_user.txt",'r', encoding='ISO-8859-1') as adictfile:
+            for line in adictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    self.id_user[toks[0]] = toks[1].replace(" ", "")
+
+        with open(dirpath + "\\id_poi.txt",'r', encoding='ISO-8859-1') as cdictfile:
+            for line in cdictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    newpoi = toks[1].replace(" ", "")
+                    self.id_poi[toks[0]] = toks[0]
+
+        with open(dirpath + "\\id_tl.txt",'r', encoding='ISO-8859-1') as cdictfile:
+            for line in cdictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 4:
+                    self.id_tl[toks[0]] = toks[2]  #id_tl：tl的id，时间h
+        with open(dirpath + "\\user_tl_poi.txt",'r', encoding='ISO-8859-1') as pafile:
+            for line in pafile:
+                toks = line.strip().split("\t")
+                if toks[0] != 'userID' and len(toks) == 8:  #不读取第一行
+                    u, tl, p = toks[0], toks[2], toks[3]  #tokes[2]是类别名称，toks[3]是类别id
+                    #u:'37',p:'4e3e097552b1a04aff2139ff'
+                    if u not in self.user_tllist:
+                        self.user_tllist[u] = []
+                    self.user_tllist[u].append(tl)
+                    if tl not in self.tl_userlist:
+                        self.tl_userlist[tl] = []
+                    self.tl_userlist[tl].append(u)
+                    # poi_user:{'21525':['33467','33467','33468'}]}
+                    # user_poi:{'33467':['21525'],'33468':['21525']}
+                    if p not in self.poi_tllist:
+                        self.poi_tllist[p] = tl
+                    if tl not in self.tl_poilist:
+                        self.tl_poilist[tl] = []
+                    self.tl_poilist[tl].append(p)
+
+    def generate_random_utlp(self, outfilename, numwalks, walklength):
+        outfile = open(outfilename, 'w', encoding="ISO-8859-1")
+        for user in self.user_tllist:
+            user0 = user
+            for j in range(0, numwalks):
+                outline = self.id_user[user0]  #路径U
+
+                for i in range(0, walklength):
+                    tls = self.user_tllist[user]
+                    numtl = len(tls)
+                    tlid = random.randrange(numtl)
+                    tl = tls[tlid]
+                    outline += " tl" + self.id_tl[tl]  #路径U TL  #id加前缀区分userid
+
+                    pois = self.tl_poilist[tl]  #时空对应的地点
+                    nump = len(pois)
+                    poiid = random.randrange(nump)
+                    poi = pois[poiid]
+                    outline += " " + self.id_poi[poi]    #路径U TL P
+
+                    tls = self.poi_tllist[poi]
+                    numtl = len(tls)
+                    tlid = random.randrange(numtl)
+                    tl = tls[tlid]
+                    outline += " tl" + self.id_tl[tl] # 路径U TL P TL
+
+                    users = self.tl_userlist[tl] # 地点对应的用户
+                    numu = len(users)
+                    userid = random.randrange(numu)
+                    user = users[userid]
+                    outline += " " + self.id_user[user]  #路径U TL P TL U
+                outfile.write(outline + "\n")
+        outfile.close()
+
+
+dirpath = ".\\data\\pup\\input"
+upuoutfilename = ".\\data\\pup\\vector\\random_walks.txt"
+
+upc_dirpath = ".\\data\\upcpu\\input"
+upc_outfilename = ".\\data\\upcpu\\vector\\random_walks.txt"
+
+utlp_dirpath = ".\\data\\utlp\\input"
+utlp_outfilename = ".\\data\\utlp\\vector\\random_walks.txt"
 
 if __name__ == "__main__":
-    numwalks = 20  #同一个起点开始的路径的数量
-    walklength = 5  #路径长度
+    numwalks = 100  #同一个起点开始的路径的数量
+    walklength = 10  #路径长度
     mpg = MetaPathGenerator()
-    mpg.read_newdata(dirpath)
-    mpg.generate_random_upu(newoutfilename, numwalks, walklength)
+
+    # mpg.read_upudata(dirpath)
+    # mpg.generate_random_upu(upuoutfilename, numwalks, walklength)
+
+    # mpg.read_upcdata(upc_dirpath)
+    # mpg.generate_random_upcpu(upc_outfilename,numwalks, walklength)
+
+    mpg.read_utlpdata(utlp_dirpath)
+    mpg.generate_random_utlp(utlp_outfilename, 5, 2)
 
 #     def read_data(self, dirpath):
 #         with open(dirpath + "\\id_author.txt",'r', encoding='ISO-8859-1') as adictfile:
