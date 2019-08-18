@@ -7,6 +7,7 @@ import sys
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import time
+import datetime
 
 sys.path.append('./code')
 from skipgram import build_model,traning_op,train
@@ -47,5 +48,8 @@ def main(args):
 	train(center_node_placeholder,context_node_placeholder,negative_samples_placeholder,loss,dataset,optimizer,NUM_EPOCHS=args.epochs,BATCH_SIZE=1,NUM_SAMPLED=args.negative_samples,care_type=args.care_type,LOG_DIRECTORY=args.log,LOG_INTERVAL=args.log_interval,MAX_KEEP_MODEL=args.max_keep_model)
 
 if __name__ == "__main__":
+	start = datetime.datetime.now()
 	args = parse_args()
 	main(args)
+	end = datetime.datetime.now()
+	print(end - start)

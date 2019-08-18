@@ -7,11 +7,11 @@ def xieleibie(dirpath):
             list = line.strip().split(" ")
             for i in range(0,len(list)):
                 if (i % 2 == 0):
-                    fb.write(list[i]+" poi\n")
-                    print(list[i]+" poi")
+                    fb.write(list[i]+" user\n")
+                    # print(list[i]+" user")
                 elif(i % 2 == 1):
-                    fb.write(list[i] + " user\n")
-                    print(list[i]+" user")
+                    fb.write(list[i] + " poi\n")
+                    # print(list[i]+" poi")
             line = f.readline()
         f.close()
 
@@ -43,16 +43,16 @@ def xieleibie_upc(dirpath):
             for i in range(0,len(list)):
                 if (i % 4 == 0):
                     fb.write(list[i]+" user\n")
-                    print(list[i]+" user")
+                    # print(list[i]+" user")
                 elif(i % 4 == 1):
                     fb.write(list[i] + " poi\n")
-                    print(list[i]+" poi")
+                    # print(list[i]+" poi")
                 elif (i % 4 == 2):
                     fb.write(list[i] + " category\n")
-                    print(list[i] + " category")
+                    # print(list[i] + " category")
                 elif (i % 4 == 3):
                     fb.write(list[i] + " poi\n")
-                    print(list[i] + " poi")
+                    # print(list[i] + " poi")
             line = f.readline()
         f.close()
 
@@ -67,24 +67,75 @@ def xieleibie_utlp(dirpath):
             for i in range(0,len(list)):
                 if (i % 4 == 0):
                     fb.write(list[i]+" user\n")
-                    print(list[i]+" user")
+                    # print(list[i]+" user")
                 elif(i % 4 == 1):
                     fb.write(list[i] + " tl\n")
-                    print(list[i]+" tl")
+                    # print(list[i]+" tl")
                 elif (i % 4 == 2):
                     fb.write(list[i] + " poi\n")
-                    print(list[i] + " cpoi")
+                    # print(list[i] + " poi")
                 elif (i % 4 == 3):
                     fb.write(list[i] + " tl\n")
-                    print(list[i] + " tl")
+                    # print(list[i] + " tl")
             line = f.readline()
         f.close()
+
+################################################################################
+#分割训练集80%和测试集20%
+def train_testdata():
+    delnum = 30#删除少于delnum 个签到的用户
+    a = 0.8 #80%作为训练集
+    data = '.\\data\\100user\\checkin.txt'
+    train = '.\\data\\100user\\train.txt'
+    test = '.\\data\\100user\\test.txt'
+
+    #打开原文件
+    f = open(data, 'r', encoding='UTF-8', errors='ignore')
+    line = f.readline()
+
+    fa = open(train, 'w')
+    fb = open(test, 'w')
+    fa.write(line)  #写列名
+    fb.write(line)
+
+    # 统计user_poi dict
+    user_poilist = dict()
+    while line:
+        line = f.readline()
+        toks = line.strip().split("\t")
+        if len(toks) == 4: #17
+            u, tl, p, c = toks[0], toks[1], toks[2], toks[3]
+            # u, t, l, p, c = toks[0], toks[8], toks[9], toks[13], toks[16]
+            # if u is not None and t is not None and l is not None and p is not None and c is not None:
+            if u not in user_poilist:
+                user_poilist[u] = []
+            user_poilist[u].append(str(line))
+    f.close()
+
+    # #地点少于delnum的删除
+    # for user in list(user_poilist):
+    #     if len(user_poilist[user]) <= delnum:
+    #         user_poilist.pop(user)
+
+    #写入train&test，并且每一项不为空
+    for user in user_poilist:
+        num = int(a*len(user_poilist[user])) #训练集  每个用户的签到数量
+        l = user_poilist[user]
+        for i in range(0,num):
+            fa.write(str(l[i]))
+
+        for i in range(num,len(user_poilist[user])):
+            fb.write(str(l[i]))
+
+    fa.close()
+    fb.close()
+
 # train_testdata()
 
-# pup = ".\\data\\pup\\vector"
-# xieleibie(pup)
-# quchong(pup)
-
+# upu = ".\\data\\upu\\vector"
+# xieleibie(upu)
+# quchong(upu)
+#
 # upcpu = ".\\data\\upcpu\\vector"
 # xieleibie_upc(upcpu)
 # quchong(upcpu)
@@ -92,55 +143,31 @@ def xieleibie_utlp(dirpath):
 utlp= ".\\data\\utlp\\vector"
 xieleibie_utlp(utlp)
 quchong(utlp)
+#
+# utlp= ".\\data\\utlp\\vector\\time3-7"
+# xieleibie_utlp(utlp)
+# quchong(utlp)
+#
+# utlp= ".\\data\\utlp\\vector\\time7-11"
+# xieleibie_utlp(utlp)
+# quchong(utlp)
+#
+# utlp= ".\\data\\utlp\\vector\\time11-15"
+# xieleibie_utlp(utlp)
+# quchong(utlp)
+#
+# utlp= ".\\data\\utlp\\vector\\time15-19"
+# xieleibie_utlp(utlp)
+# quchong(utlp)
+#
+# utlp= ".\\data\\utlp\\vector\\time18-22"
+# xieleibie_utlp(utlp)
+# quchong(utlp)
+#
+# utlp= ".\\data\\utlp\\vector\\time23-2"
+# xieleibie_utlp(utlp)
+# quchong(utlp)
 
-################################################################################
-#分割训练集80%和测试集20%
-# def train_testdata():
-#     delnum = 30#删除少于delnum 个签到的用户
-#     a = 0.8 #80%作为训练集
-#     data = '.\\data\\foursquare\\checkin.txt'
-#     train = '.\\data\\foursquare\\train.txt'
-#     test = '.\\data\\foursquare\\test.txt'
-#
-#     #打开原文件
-#     f = open(data, 'r', encoding='UTF-8', errors='ignore')
-#     line = f.readline()
-#
-#     fa = open(train, 'w')
-#     fb = open(test, 'w')
-#     fa.write(line)  #写列名
-#     fb.write(line)
-#
-#     # 统计user_poi dict
-#     user_poilist = dict()
-#     while line:
-#         line = f.readline()
-#         toks = line.strip().split("\t")
-#         if len(toks) == 17:
-#             u, t, l, p, c = toks[0], toks[8], toks[9], toks[13], toks[16]
-#             if u is not None and t is not None and l is not None and p is not None and c is not None:
-#                 if u not in user_poilist:
-#                     user_poilist[u] = []
-#                 user_poilist[u].append(str(line))
-#     f.close()
-#
-#     # #地点少于delnum的删除
-#     for user in list(user_poilist):
-#         if len(user_poilist[user]) <= delnum:
-#             user_poilist.pop(user)
-#
-#     #写入train&test，并且每一项不为空
-#     for user in user_poilist:
-#         num = int(a*len(user_poilist[user])) #训练集  每个用户的签到数量
-#         l = user_poilist[user]
-#         for i in range(0,num):
-#             fa.write(str(l[i]))
-#
-#         for i in range(num,len(user_poilist[user])):
-#             fb.write(str(l[i]))
-#
-#     fa.close()
-#     fb.close()
 
 
 ########################################################################################

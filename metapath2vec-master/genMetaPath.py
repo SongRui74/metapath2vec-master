@@ -28,6 +28,41 @@ class MetaPathGenerator:
         # self.author_paper = dict()
         # self.conf_paper = dict()
         # self.paper_conf = dict()
+    def readtestdata(self, dirpath):
+        self.id_poi.clear()
+        self.id_user.clear()
+        self.poi_userlist.clear()
+        self.user_poilist.clear()
+
+        with open(dirpath + "\\id_user.txt",'r', encoding='ISO-8859-1') as adictfile:
+            for line in adictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    self.id_user[toks[0]] = toks[1].replace(" ", "")
+        #Python replace() 方法把字符串中的 old（旧字符串） 替换成 new(新字符串)，如果指定第三个参数max，则替换不超过 max 次。
+        #id_author={dict}{'89376': 'aRuiJiang', '36606': 'aDanConescu'.....}
+        #print "#authors", len(self.id_author)
+
+        with open(dirpath + "\\id_poi.txt",'r', encoding='ISO-8859-1') as cdictfile:
+            for line in cdictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    self.id_poi[toks[0]] = toks[0]
+
+        with open(dirpath + "\\user_poi.txt",'r', encoding='ISO-8859-1') as pafile:
+            for line in pafile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    u, p = toks[0], toks[1]
+                    #u:'37',p:'4e3e097552b1a04aff2139ff'
+                    if u not in self.user_poilist:
+                        self.user_poilist[u] = []
+                    self.user_poilist[u].append(p)
+                    if p not in self.poi_userlist:
+                        self.poi_userlist[p] = []
+                    self.poi_userlist[p].append(u)
+                #poi_user:{'21525':['33467','33467','33468'}]}
+                #user_poi:{'33467':['21525'],'33468':['21525']}
 
     #构造
     #conf=poi,author=user 重写readdata和generate
@@ -49,8 +84,7 @@ class MetaPathGenerator:
         with open(dirpath + "\\id_poi.txt",'r', encoding='ISO-8859-1') as cdictfile:
             for line in cdictfile:
                 toks = line.strip().split("\t")
-                if len(toks) == 2:
-                    newpoi = toks[1].replace(" ", "")
+                if len(toks) == 3:
                     self.id_poi[toks[0]] = toks[0]
 
         with open(dirpath + "\\user_poi.txt",'r', encoding='ISO-8859-1') as pafile:
@@ -69,11 +103,17 @@ class MetaPathGenerator:
                 #user_poi:{'33467':['21525'],'33468':['21525']}
     def generate_random_upu(self, outfilename, numwalks, walklength):
         outfile = open(outfilename, 'w', encoding="ISO-8859-1")
-        for poi in self.poi_userlist:
-            poi0 = poi
+        for user in self.user_poilist:
+            user0 = user
             for j in range(0, numwalks):  # wnum walks以每个起点行走的路径的数量。以poi0为起点，随机numwalks个路径。
-                outline = self.id_poi[poi0]  # outline='vADB'即122会议的名称
+                outline = self.id_user[user0]  # outline='vADB'即122会议的名称
                 for i in range(0, walklength):  # 行走的长度走一次是一个VAV，走walklength次，长度为2*walklength+1
+                    pois = self.user_poilist[user]
+                    numa = len(pois)  # numa代表用户u对应的地点个数
+                    poiid = random.randrange(numa)
+                    poi = pois[poiid]
+                    outline += " " + self.id_poi[poi]  # 路径UP
+
                     users = self.poi_userlist[poi]
                     numa = len(users)  # numa代表该会议122的作者人数38
                     userid = random.randrange(numa)  # 将作者顺序打乱authorid=随机数28每次都不一样，但是为38中的一个数字
@@ -81,11 +121,6 @@ class MetaPathGenerator:
                     # randrange() 方法返回指定递增基数集合中的一个随机数，基数缺省值为1。
                     user = users[userid]  # 随机authorid的作者编号='33491' #将打乱的作者重新放入author
                     outline += " " + self.id_user[user]  # 将会议名称和作者名称以空格连接{'vADB' 'aJ.Maguire'}
-                    pois = self.user_poilist[user]  # 作者对应的会议
-                    numc = len(pois)
-                    poiid = random.randrange(numc)
-                    poi = pois[poiid]
-                    outline += " " + self.id_poi[poi]  # outline={'vADB aJ.Maguire vADB'}
                 outfile.write(outline + "\n")  # 产生多个PUPUP的序列。
         outfile.close()
 
@@ -107,8 +142,7 @@ class MetaPathGenerator:
         with open(dirpath + "\\id_poi.txt",'r', encoding='ISO-8859-1') as cdictfile:
             for line in cdictfile:
                 toks = line.strip().split("\t")
-                if len(toks) == 2:
-                    newpoi = toks[1].replace(" ", "")
+                if len(toks) == 3:
                     self.id_poi[toks[0]] = toks[0]
 
         with open(dirpath + "\\id_category.txt",'r', encoding='ISO-8859-1') as cdictfile:
@@ -121,8 +155,8 @@ class MetaPathGenerator:
         with open(dirpath + "\\user_poi_cate.txt",'r', encoding='ISO-8859-1') as pafile:
             for line in pafile:
                 toks = line.strip().split("\t")
-                if len(toks) == 4:
-                    u, p, c = toks[0], toks[1], toks[3]  #tokes[2]是类别名称，toks[3]是类别id
+                if len(toks) == 3:
+                    u, p, c = toks[0], toks[1], toks[2]
                     #u:'37',p:'4e3e097552b1a04aff2139ff'
                     if u not in self.user_poilist:
                         self.user_poilist[u] = []
@@ -137,7 +171,6 @@ class MetaPathGenerator:
                     if c not in self.cate_poilist:
                         self.cate_poilist[c] = []
                     self.cate_poilist[c].append(p)
-
     def generate_random_upcpu(self, outfilename, numwalks, walklength):
         outfile = open(outfilename, 'w', encoding="ISO-8859-1")
         for user in self.user_poilist:
@@ -152,7 +185,7 @@ class MetaPathGenerator:
                     outline += " " + self.id_poi[poi]  #路径UP
 
                     cate = self.poi_catelist[poi]
-                    outline += " c" + cate   #路径UPC  #id 更改为 c+类别id  区别于其他实体的数字id
+                    outline += " " + cate   #路径UPC  #id 更改为 c+类别id  区别于其他实体的数字id
 
                     pois = self.cate_poilist[cate]  #类别对应的地点
                     numc = len(pois)   #numc代表类别c对应的poi个数
@@ -185,20 +218,19 @@ class MetaPathGenerator:
         with open(dirpath + "\\id_poi.txt",'r', encoding='ISO-8859-1') as cdictfile:
             for line in cdictfile:
                 toks = line.strip().split("\t")
-                if len(toks) == 2:
-                    newpoi = toks[1].replace(" ", "")
+                if len(toks) == 3:
                     self.id_poi[toks[0]] = toks[0]
 
         with open(dirpath + "\\id_tl.txt",'r', encoding='ISO-8859-1') as cdictfile:
             for line in cdictfile:
                 toks = line.strip().split("\t")
-                if len(toks) == 4:
-                    self.id_tl[toks[0]] = toks[2]  #id_tl：tl的id，时间h
+                if len(toks) == 2:
+                    self.id_tl[toks[0]] = toks[1]  #tl的id，tl内容
         with open(dirpath + "\\user_tl_poi.txt",'r', encoding='ISO-8859-1') as pafile:
             for line in pafile:
                 toks = line.strip().split("\t")
-                if toks[0] != 'userID' and len(toks) == 8:  #不读取第一行
-                    u, tl, p = toks[0], toks[2], toks[3]  #tokes[2]是类别名称，toks[3]是类别id
+                if len(toks) == 3:
+                    u, tl, p = toks[0], toks[1], toks[2]  #tokes[2]是类别名称，toks[3]是类别id
                     #u:'37',p:'4e3e097552b1a04aff2139ff'
                     if u not in self.user_tllist:
                         self.user_tllist[u] = []
@@ -209,7 +241,8 @@ class MetaPathGenerator:
                     # poi_user:{'21525':['33467','33467','33468'}]}
                     # user_poi:{'33467':['21525'],'33468':['21525']}
                     if p not in self.poi_tllist:
-                        self.poi_tllist[p] = tl
+                        self.poi_tllist[p] = []
+                    self.poi_tllist[p].append(tl)
                     if tl not in self.tl_poilist:
                         self.tl_poilist[tl] = []
                     self.tl_poilist[tl].append(p)
@@ -218,15 +251,25 @@ class MetaPathGenerator:
         outfile = open(outfilename, 'w', encoding="ISO-8859-1")
         for user in self.user_tllist:
             user0 = user
+            #随机初始tl0
+            tls = self.user_tllist[user]
+            tlid0 = random.randrange(len(tls))
+            tl0 = tls[tlid0]
+            h0 = self.id_tl[tl0][0:2]
+
             for j in range(0, numwalks):
                 outline = self.id_user[user0]  #路径U
-
                 for i in range(0, walklength):
                     tls = self.user_tllist[user]
                     numtl = len(tls)
-                    tlid = random.randrange(numtl)
-                    tl = tls[tlid]
-                    outline += " tl" + self.id_tl[tl]  #路径U TL  #id加前缀区分userid
+                    while(1):
+                        tlid = random.randrange(numtl)
+                        tl = tls[tlid]
+                        h = self.id_tl[tl][0:2]
+                        if abs(int(h)-int(h0)) < 4:  #时间邻域，上下3个小时
+                            outline += " " + tl  #路径U TL
+                            h0 = h
+                            break
 
                     pois = self.tl_poilist[tl]  #时空对应的地点
                     nump = len(pois)
@@ -236,9 +279,17 @@ class MetaPathGenerator:
 
                     tls = self.poi_tllist[poi]
                     numtl = len(tls)
-                    tlid = random.randrange(numtl)
-                    tl = tls[tlid]
-                    outline += " tl" + self.id_tl[tl] # 路径U TL P TL
+                    while (1):
+                        tlid = random.randrange(numtl)
+                        tl = tls[tlid]
+                        h = self.id_tl[tl][0:2]
+                        if abs(int(h) - int(h0)) < 4:  #时间邻域，上下3个小时
+                            outline += " " + tl  # 路径U TL P TL
+                            h0 = h
+                            break
+                    # tlid = random.randrange(numtl)
+                    # tl = tls[tlid]
+                    # outline += " " + self.id_tl[tl]
 
                     users = self.tl_userlist[tl] # 地点对应的用户
                     numu = len(users)
@@ -249,8 +300,11 @@ class MetaPathGenerator:
         outfile.close()
 
 
-dirpath = ".\\data\\pup\\input"
-upuoutfilename = ".\\data\\pup\\vector\\random_walks.txt"
+dirpath = ".\\data\\upu\\input"
+upuoutfilename = ".\\data\\upu\\vector\\random_walks.txt"
+
+# dirpath = ".\\data\\test\\input"
+# upuoutfilename = ".\\data\\test\\vector\\random_walks.txt"
 
 upc_dirpath = ".\\data\\upcpu\\input"
 upc_outfilename = ".\\data\\upcpu\\vector\\random_walks.txt"
@@ -258,8 +312,28 @@ upc_outfilename = ".\\data\\upcpu\\vector\\random_walks.txt"
 utlp_dirpath = ".\\data\\utlp\\input"
 utlp_outfilename = ".\\data\\utlp\\vector\\random_walks.txt"
 
+
+#划分时间段
+utlp_dirpath1 = ".\\data\\utlp\\input\\time3-7"
+utlp_outfilename1 = ".\\data\\utlp\\vector\\time3-7\\random_walks.txt"
+
+utlp_dirpath2 = ".\\data\\utlp\\input\\time7-11"
+utlp_outfilename2 = ".\\data\\utlp\\vector\\time7-11\\random_walks.txt"
+
+utlp_dirpath3 = ".\\data\\utlp\\input\\time11-15"
+utlp_outfilename3 = ".\\data\\utlp\\vector\\time11-15\\random_walks.txt"
+
+utlp_dirpath4 = ".\\data\\utlp\\input\\time15-19"
+utlp_outfilename4 = ".\\data\\utlp\\vector\\time15-19\\random_walks.txt"
+
+utlp_dirpath5 = ".\\data\\utlp\\input\\time18-22"
+utlp_outfilename5 = ".\\data\\utlp\\vector\\time18-22\\random_walks.txt"
+
+utlp_dirpath6 = ".\\data\\utlp\\input\\time23-2"
+utlp_outfilename6 = ".\\data\\utlp\\vector\\time23-2\\random_walks.txt"
+
 if __name__ == "__main__":
-    numwalks = 100  #同一个起点开始的路径的数量
+    numwalks = 50  #同一个起点开始的路径的数量
     walklength = 10  #路径长度
     mpg = MetaPathGenerator()
 
@@ -270,8 +344,9 @@ if __name__ == "__main__":
     # mpg.generate_random_upcpu(upc_outfilename,numwalks, walklength)
 
     mpg.read_utlpdata(utlp_dirpath)
-    mpg.generate_random_utlp(utlp_outfilename, 5, 2)
+    mpg.generate_random_utlp(utlp_outfilename, numwalks, walklength)
 
+###########################################################################################################################
 #     def read_data(self, dirpath):
 #         with open(dirpath + "\\id_author.txt",'r', encoding='ISO-8859-1') as adictfile:
 #             for line in adictfile:

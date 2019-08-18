@@ -2,22 +2,24 @@ import numpy as np
 import json
 import csv
 
-# 路径要改！！！！！！！！！！！！！！！1
-index2nodeid = json.load(open(".\\log\\index2nodeid.json"))
+# 路径要改！！！！！！！！！！！！！！！
+dir = ".\\data\\pup\\recommend\\log"
+
+index2nodeid = json.load(open(dir +"\\index2nodeid.json"))
 index2nodeid = {int(k): v for k, v in index2nodeid.items()}
 nodeid2index = {v: int(k) for k, v in index2nodeid.items()}
-node_embeddings = np.load(".\\log\\node_embeddings.npz")['arr_0']
+node_embeddings = np.load(dir +"\\node_embeddings.npz")['arr_0']
 # 100维的向量
 # 存放poi和user的id
 poilist = list()
 userlist = list()
-
 poi_cate = dict()
 
 
-# 路径要改！！！！！！！！！！！！！！！1
+# 路径要改！！！！！！！！！！！！！！！
+dirpath = ".\\data\\pup\\vector"
 def readnodetype():
-    f = open('.\\data\\pup\\vector\\node_type_mapings.txt', 'r')
+    f = open(dirpath+'\\node_type_mapings.txt', 'r')
     line = f.readline()
     while line:
         list = line.strip().split(" ")
@@ -31,7 +33,7 @@ def readnodetype():
 
 
 def poi_category():
-    f = open(".\\data\\pup\\vector\\poi_cate_index.txt", 'r')
+    f = open(dirpath+"\\poi_cate_index.txt", 'r')
     line = f.readline()
     while line:
         list = line.strip().split("\t")
