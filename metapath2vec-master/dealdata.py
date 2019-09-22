@@ -56,7 +56,6 @@ def xieleibie_upc(dirpath):
             line = f.readline()
         f.close()
 
-
 #写对应的类别
 def xieleibie_utlp(dirpath):
     f = open(dirpath + '\\random_walks.txt','r', encoding='UTF-8', errors='ignore')
@@ -79,6 +78,34 @@ def xieleibie_utlp(dirpath):
                     # print(list[i] + " tl")
             line = f.readline()
         f.close()
+
+# def xieleibie_utlpc(dirpath):
+#     f = open(dirpath + '\\random_walks.txt','r', encoding='UTF-8', errors='ignore')
+#     line = f.readline()              		 # 调用文件的 readline()方法
+#     with open(dirpath + '\\node_type.txt', 'w') as fb:
+#         while line:
+#             list = line.strip().split(" ")
+#             for i in range(0,len(list)):
+#                 if (i % 6 == 0):
+#                     fb.write(list[i]+" user\n")
+#                     # print(list[i]+" user")
+#                 elif(i % 6 == 1):
+#                     fb.write(list[i] + " tl\n")
+#                     # print(list[i]+" tl")
+#                 elif (i % 6 == 2):
+#                     fb.write(list[i] + " poi\n")
+#                     # print(list[i] + " poi")
+#                 elif (i % 6 == 3):
+#                     fb.write(list[i] + " category\n")
+#                     # print(list[i] + " category")
+#                 elif (i % 6 == 4):
+#                     fb.write(list[i] + " poi\n")
+#                     # print(list[i] + " poi")
+#                 elif (i % 6 == 5):
+#                     fb.write(list[i] + " tl\n")
+#                     # print(list[i] + " tl")
+#             line = f.readline()
+#         f.close()
 
 ################################################################################
 #分割训练集80%和测试集20%
@@ -140,33 +167,18 @@ def train_testdata():
 # xieleibie_upc(upcpu)
 # quchong(upcpu)
 
-utlp= ".\\data\\utlp\\vector"
-xieleibie_utlp(utlp)
-quchong(utlp)
-#
-# utlp= ".\\data\\utlp\\vector\\time3-7"
+# utlp= ".\\data\\utlp\\vector"
 # xieleibie_utlp(utlp)
 # quchong(utlp)
-#
-# utlp= ".\\data\\utlp\\vector\\time7-11"
-# xieleibie_utlp(utlp)
-# quchong(utlp)
-#
-# utlp= ".\\data\\utlp\\vector\\time11-15"
-# xieleibie_utlp(utlp)
-# quchong(utlp)
-#
-# utlp= ".\\data\\utlp\\vector\\time15-19"
-# xieleibie_utlp(utlp)
-# quchong(utlp)
-#
-# utlp= ".\\data\\utlp\\vector\\time18-22"
-# xieleibie_utlp(utlp)
-# quchong(utlp)
-#
-# utlp= ".\\data\\utlp\\vector\\time23-2"
-# xieleibie_utlp(utlp)
-# quchong(utlp)
+
+
+utlptlu= ".\\data\\utlptlu\\vector"
+xieleibie_utlp(utlptlu)
+quchong(utlptlu)
+
+# utlpc= ".\\data\\utlpc\\vector"
+# xieleibie_utlpc(utlpc)
+# quchong(utlpc)
 
 
 
