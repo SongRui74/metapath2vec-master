@@ -4,7 +4,7 @@ import csv
 import heapq
 from collections import Counter
 
-dir = ".\\data\\utlptlu\\recommend"
+dir = ".\\data\\ulp\\recommend"
 # 100维的向量
 index2nodeid = json.load(open(dir+"\\log\\index2nodeid.json"))
 index2nodeid = {int(k): v for k, v in index2nodeid.items()}
@@ -209,10 +209,10 @@ def readtest():
 
 if __name__ == "__main__":
 
-    # calsim(userlist) #统计user相似
+    calsim(userlist) #统计user相似
     uptest, utlptest = readtest()  #读取测试集
 
-    topkuser = 33  # 相似用户个数
+    topkuser = 3  # 相似用户个数
     allk = [5,10,20,30,50]#推荐列表
 
 
@@ -238,28 +238,27 @@ if __name__ == "__main__":
         print("recall:" + str(sumrecall / len(uptest)))
         print("f1:" + str(sumf1 / len(uptest)))
 
-        #输入时空的评估
-        sumpre = 0
-        sumrecall = 0
-        sumf1 = 0
-        readtl()
-        for utlp in utlptest:
-            temp = utlp.split('-')
-            userid = temp[0]
-            time = id_tl[temp[1]][0:2]
-            loc = id_tl[temp[1]][2:]
-
-            topdict,topid = topk(userid,topkuser)  #获取topk个相似用户
-            rec = rec_tl(time,loc,topid,k)  #获取相似user的相似时间的推荐poi列表
-            test = utlptest[utlp]
-            #评估
-            precision,recall,f1 = eval(test,rec)
-            sumpre = sumpre + precision
-            sumrecall = sumrecall + recall
-            sumf1 = sumf1 + f1
-        print('输入用户、时间、地点的评估：')
-        print("precision:"+ str(sumpre/len(utlptest)))
-        print("recall:" + str(sumrecall / len(utlptest)))
-        print("f1:" + str(sumf1 / len(utlptest)))
-
-        print('\n')
+        # #输入时空的评估
+        # sumpre = 0
+        # sumrecall = 0
+        # sumf1 = 0
+        # readtl()
+        # for utlp in utlptest:
+        #     temp = utlp.split('-')
+        #     userid = temp[0]
+        #     time = id_tl[temp[1]][0:2]
+        #     loc = id_tl[temp[1]][2:]
+        #
+        #     topdict,topid = topk(userid,topkuser)  #获取topk个相似用户
+        #     rec = rec_tl(time,loc,topid,k)  #获取相似user的相似时间的推荐poi列表
+        #     test = utlptest[utlp]
+        #     #评估
+        #     precision,recall,f1 = eval(test,rec)
+        #     sumpre = sumpre + precision
+        #     sumrecall = sumrecall + recall
+        #     sumf1 = sumf1 + f1
+        # print('输入用户、时间、地点的评估：')
+        # print("precision:"+ str(sumpre/len(utlptest)))
+        # print("recall:" + str(sumrecall / len(utlptest)))
+        # print("f1:" + str(sumf1 / len(utlptest)))
+        # print('\n')

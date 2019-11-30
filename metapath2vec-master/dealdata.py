@@ -79,36 +79,6 @@ def xieleibie_utlp(dirpath):
             line = f.readline()
         f.close()
 
-# def xieleibie_utlpc(dirpath):
-#     f = open(dirpath + '\\random_walks.txt','r', encoding='UTF-8', errors='ignore')
-#     line = f.readline()              		 # 调用文件的 readline()方法
-#     with open(dirpath + '\\node_type.txt', 'w') as fb:
-#         while line:
-#             list = line.strip().split(" ")
-#             for i in range(0,len(list)):
-#                 if (i % 6 == 0):
-#                     fb.write(list[i]+" user\n")
-#                     # print(list[i]+" user")
-#                 elif(i % 6 == 1):
-#                     fb.write(list[i] + " tl\n")
-#                     # print(list[i]+" tl")
-#                 elif (i % 6 == 2):
-#                     fb.write(list[i] + " poi\n")
-#                     # print(list[i] + " poi")
-#                 elif (i % 6 == 3):
-#                     fb.write(list[i] + " category\n")
-#                     # print(list[i] + " category")
-#                 elif (i % 6 == 4):
-#                     fb.write(list[i] + " poi\n")
-#                     # print(list[i] + " poi")
-#                 elif (i % 6 == 5):
-#                     fb.write(list[i] + " tl\n")
-#                     # print(list[i] + " tl")
-#             line = f.readline()
-#         f.close()
-
-################################################################################
-#分割训练集80%和测试集20%
 def train_testdata():
     delnum = 30#删除少于delnum 个签到的用户
     a = 0.8 #80%作为训练集
@@ -167,18 +137,17 @@ def train_testdata():
 # xieleibie_upc(upcpu)
 # quchong(upcpu)
 
-# utlp= ".\\data\\utlp\\vector"
-# xieleibie_utlp(utlp)
-# quchong(utlp)
+utp= ".\\data\\utp\\vector"
+xieleibie_utlp(utp)
+quchong(utp)
 
+utp= ".\\data\\ulp\\vector"
+xieleibie_utlp(utp)
+quchong(utp)
 
-utlptlu= ".\\data\\utlptlu\\vector"
-xieleibie_utlp(utlptlu)
-quchong(utlptlu)
-
-# utlpc= ".\\data\\utlpc\\vector"
-# xieleibie_utlpc(utlpc)
-# quchong(utlpc)
+# utlptlu= ".\\data\\utlptlu\\vector"
+# xieleibie_utlp(utlptlu)
+# quchong(utlptlu)
 
 
 

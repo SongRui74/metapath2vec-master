@@ -12,13 +12,13 @@ nodeid2index_upu = {v: int(k) for k, v in index2nodeid.items()}
 node_embeddings_upu = np.load(dir+"\\log\\node_embeddings.npz")['arr_0']
 # 100维的向量
 
-dir = ".\\data\\upcpu\\recommend"
+dir = ".\\data\\utp\\recommend"
 index2nodeid = json.load(open(dir+"\\log\\index2nodeid.json"))
 index2nodeid = {int(k): v for k, v in index2nodeid.items()}
 nodeid2index_upcpu = {v: int(k) for k, v in index2nodeid.items()}
 node_embeddings_upcpu = np.load(dir+"\\log\\node_embeddings.npz")['arr_0']
 
-dir = ".\\data\\utlptlu\\recommend"
+dir = ".\\data\\ulp\\recommend"
 index2nodeid = json.load(open(dir+"\\log\\index2nodeid.json"))
 index2nodeid = {int(k): v for k, v in index2nodeid.items()}
 nodeid2index_utlptlu = {v: int(k) for k, v in index2nodeid.items()}
@@ -225,7 +225,7 @@ def readtest():
 
 if __name__ == "__main__":
 
-    calsim(userlist,1,0,1) #统计user相似
+    calsim(userlist,1,1,1) #统计user相似
     uptest, utlptest = readtest()  #读取测试集
 
     topkuser = 3  # 相似用户个数
@@ -277,4 +277,4 @@ if __name__ == "__main__":
         # print("precision:"+ str(sumpre/len(utlptest)))
         # print("recall:" + str(sumrecall / len(utlptest)))
         # print("f1:" + str(sumf1 / len(utlptest)))
-        print('\n')
+        # print('\n')
