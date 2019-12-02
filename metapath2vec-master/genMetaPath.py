@@ -19,6 +19,8 @@ class MetaPathGenerator:
         self.poi_tllist = dict()
         self.tl_poilist = dict()
 
+        self.poi_poilist = dict()
+
         # self.id_author = dict()
         # self.id_conf = dict()
         # self.author_coauthorlist = dict()
@@ -403,6 +405,87 @@ class MetaPathGenerator:
                 outfile.write(outline + "\n")
         outfile.close()
 
+    def read_uppudata(self, dirpath):
+        self.id_poi.clear()
+        self.id_user.clear()
+        self.poi_userlist.clear()
+        self.user_poilist.clear()
+        self.poi_poilist.clear()
+
+        with open(dirpath + "\\id_user.txt",'r', encoding='ISO-8859-1') as adictfile:
+            for line in adictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    self.id_user[toks[0]] = toks[1].replace(" ", "")
+        #Python replace() 方法把字符串中的 old（旧字符串） 替换成 new(新字符串)，如果指定第三个参数max，则替换不超过 max 次。
+        #id_author={dict}{'89376': 'aRuiJiang', '36606': 'aDanConescu'.....}
+        #print "#authors", len(self.id_author)
+
+        with open(dirpath + "\\id_poi.txt",'r', encoding='ISO-8859-1') as cdictfile:
+            for line in cdictfile:
+                toks = line.strip().split("\t")
+                if len(toks) == 3:
+                    self.id_poi[toks[0]] = toks[0]
+
+        with open(dirpath + "\\user_poi.txt",'r', encoding='ISO-8859-1') as pafile:
+            for line in pafile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    u, p = toks[0], toks[1]
+                    #u:'37',p:'4e3e097552b1a04aff2139ff'
+                    if u not in self.user_poilist:
+                        self.user_poilist[u] = []
+                    self.user_poilist[u].append(p)
+                    if p not in self.poi_userlist:
+                        self.poi_userlist[p] = []
+                    self.poi_userlist[p].append(u)
+                #poi_user:{'21525':['33467','33467','33468'}]}
+                #user_poi:{'33467':['21525'],'33468':['21525']}
+
+        with open(dirpath + "\\poi_poi.txt",'r', encoding='ISO-8859-1') as pafile:
+            for line in pafile:
+                toks = line.strip().split("\t")
+                if len(toks) == 2:
+                    p1, p2 = toks[0], toks[1]
+                    if p1 not in self.poi_poilist:
+                        self.poi_poilist[p1] = []
+                    self.poi_poilist[p1].append(p2)
+                    if p2 not in self.poi_poilist:
+                        self.poi_poilist[p2] = []
+                    self.poi_poilist[p2].append(p1)
+    def generate_random_uppu(self, outfilename, numwalks, walklength):
+        outfile = open(outfilename, 'w', encoding="ISO-8859-1")
+        for user in self.user_poilist:
+            user0 = user
+            for j in range(0, numwalks):
+                outline = self.id_user[user0]  # 路径U
+                for i in range(0, walklength):
+                    poi1s = self.user_poilist[user]
+                    numa = len(poi1s)
+                    poiid = random.randrange(numa)
+                    poi1 = poi1s[poiid]
+                    outline += " " + self.id_poi[poi1]  # 路径UP
+
+                    if poi1 not in self.poi_poilist:
+                        continue
+
+                    poi2s = self.poi_poilist[poi1]
+                    numb = len(poi2s)
+                    poiid = random.randrange(numb)
+                    poi2 = poi2s[poiid]
+                    outline += " " + self.id_poi[poi2]  # 路径UPP
+
+                    if poi2 not in self.poi_userlist:
+                        continue
+
+                    users = self.poi_userlist[poi2]
+                    numa = len(users)
+                    userid = random.randrange(numa)
+                    user = users[userid]
+                    outline += " " + self.id_user[user]  # 路径UPPU
+                outfile.write(outline + "\n")
+        outfile.close()
+
 dirpath = ".\\data\\upu\\input"
 upuoutfilename = ".\\data\\upu\\vector\\random_walks.txt"
 
@@ -421,6 +504,8 @@ ulp_outfilename = ".\\data\\ulp\\vector\\random_walks.txt"
 utlptlu_dirpath = ".\\data\\utlptlu\\input"
 utlptlu_outfilename = ".\\data\\utlptlu\\vector\\random_walks.txt"
 
+uppu_dirpath = ".\\data\\uppu\\input"
+uppu_outfilename = ".\\data\\uppu\\vector\\random_walks.txt"
 
 if __name__ == "__main__":
     numwalks = 20  #同一个起点开始的路径的数量
@@ -433,14 +518,17 @@ if __name__ == "__main__":
     # mpg.read_upcdata(upc_dirpath)
     # mpg.generate_random_upcpu(upc_outfilename,numwalks, walklength)
 
-    mpg.read_utlpdata(utp_dirpath)
-    mpg.generate_random_utp(utp_outfilename, numwalks, walklength)
-
-    mpg.read_utlpdata(ulp_dirpath)
-    mpg.generate_random_ulp(ulp_outfilename, numwalks, walklength)
+    # mpg.read_utlpdata(utp_dirpath)
+    # mpg.generate_random_utp(utp_outfilename, numwalks, walklength)
+    #
+    # mpg.read_utlpdata(ulp_dirpath)
+    # mpg.generate_random_ulp(ulp_outfilename, numwalks, walklength)
 
     # mpg.read_utlpdata(utlptlu_dirpath)
     # mpg.generate_random_utlptlu(utlptlu_outfilename, numwalks, walklength)
+
+    mpg.read_uppudata(uppu_dirpath)
+    mpg.generate_random_uppu(uppu_outfilename, numwalks, walklength)
 
 
 ###########################################################################################################################

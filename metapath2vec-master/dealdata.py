@@ -127,6 +127,22 @@ def train_testdata():
     fa.close()
     fb.close()
 
+def xieleibie_uppu(dirpath):
+    f = open(dirpath + '\\random_walks.txt','r', encoding='UTF-8', errors='ignore')
+    line = f.readline()              		 # 调用文件的 readline()方法
+    with open(dirpath + '\\node_type.txt', 'w') as fb:
+        while line:
+            list = line.strip().split(" ")
+            for i in range(0,len(list)):
+                if list[i].startswith('u'):
+                    fb.write(list[i] + " user\n")
+                    #print(list[i]+" user")
+                elif list[i].startswith('p'):
+                    fb.write(list[i] + " poi\n")
+                    #print(list[i] + " poi")
+            line = f.readline()
+        f.close()
+
 # train_testdata()
 
 # upu = ".\\data\\upu\\vector"
@@ -137,18 +153,21 @@ def train_testdata():
 # xieleibie_upc(upcpu)
 # quchong(upcpu)
 
-utp= ".\\data\\utp\\vector"
-xieleibie_utlp(utp)
-quchong(utp)
-
-utp= ".\\data\\ulp\\vector"
-xieleibie_utlp(utp)
-quchong(utp)
+# utp= ".\\data\\utp\\vector"
+# xieleibie_utlp(utp)
+# quchong(utp)
+#
+# utp= ".\\data\\ulp\\vector"
+# xieleibie_utlp(utp)
+# quchong(utp)
 
 # utlptlu= ".\\data\\utlptlu\\vector"
 # xieleibie_utlp(utlptlu)
 # quchong(utlptlu)
 
+uppu= ".\\data\\uppu\\vector"
+xieleibie_uppu(uppu)
+quchong(uppu)
 
 
 ########################################################################################
