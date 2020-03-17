@@ -81,7 +81,8 @@ def xieleibie_utlp(dirpath):
 
 def train_testdata():
     delnum = 30#删除少于delnum 个签到的用户
-    a = 0.8 #80%作为训练集
+    a = 0.9 #80%作为训练集
+
     data = '.\\data\\100user\\checkin.txt'
     train = '.\\data\\100user\\train.txt'
     test = '.\\data\\100user\\test.txt'
@@ -143,7 +144,25 @@ def xieleibie_uppu(dirpath):
             line = f.readline()
         f.close()
 
-# train_testdata()
+def xieleibie_utlpptlu(dirpath):
+    f = open(dirpath + '\\random_walks.txt','r', encoding='UTF-8', errors='ignore')
+    line = f.readline()              		 # 调用文件的 readline()方法
+    with open(dirpath + '\\node_type.txt', 'w') as fb:
+        while line:
+            list = line.strip().split(" ")
+            for i in range(0,len(list)):
+                if list[i].startswith('u'):
+                    fb.write(list[i] + " user\n")
+                    #print(list[i]+" user")
+                elif list[i].startswith('p'):
+                    fb.write(list[i] + " poi\n")
+                    #print(list[i]+" poi")
+                elif list[i].startswith('tl'):
+                    fb.write(list[i] + " tl\n")
+                    #print(list[i] + " tl")
+            line = f.readline()
+        f.close()
+train_testdata()
 
 # upu = ".\\data\\upu\\vector"
 # xieleibie(upu)
@@ -165,10 +184,13 @@ def xieleibie_uppu(dirpath):
 # xieleibie_utlp(utlptlu)
 # quchong(utlptlu)
 
-uppu= ".\\data\\uppu\\vector"
-xieleibie_uppu(uppu)
-quchong(uppu)
+# uppu= ".\\data\\uppu\\vector"
+# xieleibie_uppu(uppu)
+# quchong(uppu)
 
+# utlpptlu= ".\\data\\utlpptlu\\vector"
+# xieleibie_utlpptlu(utlpptlu)
+# quchong(utlpptlu)
 
 ########################################################################################
 # #拆分类别逗号

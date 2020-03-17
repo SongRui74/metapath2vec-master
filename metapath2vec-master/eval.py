@@ -4,7 +4,7 @@ import csv
 import heapq
 from collections import Counter
 
-dir = ".\\data\\ulp\\recommend"
+dir = ".\\data\\utlpptlu\\recommend"
 # 100维的向量
 index2nodeid = json.load(open(dir+"\\log\\index2nodeid.json"))
 index2nodeid = {int(k): v for k, v in index2nodeid.items()}
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     calsim(userlist) #统计user相似
     uptest, utlptest = readtest()  #读取测试集
 
-    topkuser = 3  # 相似用户个数
+    topkuser = 33  # 相似用户个数
     allk = [5,10,20,30,50]#推荐列表
 
 
